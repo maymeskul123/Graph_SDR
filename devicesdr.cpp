@@ -16,7 +16,7 @@ DeviceSDR::DeviceSDR(QString threadName, int chankSize, float rate_, float centF
     cent_freq = centFreq_;
     gain = gain_;
     isAborted = false;
-    setup_SDR();
+
 }
 
 void DeviceSDR::setup_SDR()
@@ -105,6 +105,7 @@ DeviceSDR::~DeviceSDR()
 void DeviceSDR::receiveStart()
 {
     //qDebug() << "START RECEIVE";
+    setup_SDR();
     start();
 }
 
