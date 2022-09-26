@@ -17,7 +17,6 @@ Data_mem::Data_mem(int size_data_, float rate_, float cent_freq_)
     realData = new float[size_data_];
     size_data = size_data_;
     chunkReceiveFull = false;
-
 }
 
 Data_mem::~Data_mem()
@@ -42,6 +41,7 @@ void Data_mem::receiveValue(std::complex<float> *data[])
         {
             realData[i] = reinterpret_cast<float(&)[2]>(dataPtr[i])[0];
         }
+    //qDebug() << "Size real" << size_t(realData);
 }
 
 
@@ -91,8 +91,8 @@ CArray& Data_mem::getFFT()
         CArray d(dataPtr, size_data);
         dataSpectr = d;
         CArray &x = dataSpectr;
-        CArray c(dataPtr, size_data);
-        CArray &y = c;
+//        CArray c(dataPtr, size_data);
+//        CArray &y = c;
 //        for (auto it = begin(x); it!=end(x); ++it)
 //        {
 //            qDebug() << "before" << it->real();
@@ -109,4 +109,15 @@ CArray& Data_mem::getFFT()
 int Data_mem::getDataSize()
 {
     return size_data;
+}
+
+std::vector<double> Data_mem::linspace(double start, double end, int count)
+{
+    std::vector<double> r;
+    r.reserve(count);
+    double step = (end - start) / (count-1);
+    for (int i = 0; i < count ; i++) {
+        r.push_back(start + i * step);
+    }
+    return r;
 }

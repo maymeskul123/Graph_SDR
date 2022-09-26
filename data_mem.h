@@ -4,6 +4,7 @@
 #include <QThread>
 #include <iostream>
 #include <valarray>
+#include <vector>
 
 const double PI = 3.141592653589793238460;
 typedef std::complex<float> Complex;
@@ -23,7 +24,9 @@ public:
     void fft(CArray& x);
     int getDataSize();
     CArray& getFFT();
+    std::vector<double> linspace(double start, double end, int count);
     bool chunkReceiveFull;
+
 
 public slots:
     void receiveValue(std::complex<float> *data[]);
@@ -37,7 +40,7 @@ private:
     bool isAborted;
     float *realData;
     int size_data;
-    CArray dataSpectr;
+    CArray dataSpectr;    
 };
 
 #endif // DATA_MEM_H

@@ -35,6 +35,7 @@ public:
     int x, y, cur_x, cur_spectr_x;
     void startTimer();
     void loadData_mem(Data_mem *data);
+    std::vector<float> linspace(float start, float end, int count);
 
 //public slots:
 //    void receive_complex(std::complex<float>);

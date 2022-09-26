@@ -16,7 +16,6 @@ DeviceSDR::DeviceSDR(QString threadName, int chankSize, float rate_, float centF
     cent_freq = centFreq_;
     gain = gain_;
     isAborted = false;
-
 }
 
 void DeviceSDR::setup_SDR()

@@ -7,10 +7,12 @@
 #include <thread>
 #include <QThread>
 #include <QScreen>
+#include <algorithm>
+
 
 
 int main(int argc, char *argv[])
-{    
+{
     QApplication app(argc, argv);
     //app.widgetAt(500, 100);
     //QScreen *primaryScreen = QGuiApplication::primaryScreen();
@@ -22,8 +24,19 @@ int main(int argc, char *argv[])
     //QScreen *scr1
     MainWindow window;    
     window.show();
-    DeviceSDR device("device-1", 4000, window.rate->text().toFloat() ,window.frequency->text().toFloat(), window.gain->text().toFloat());
+    float fCentr = window.frequency->text().toFloat();
+    float rate = window.rate->text().toFloat();
+    float gain = window.gain->text().toFloat();
+    DeviceSDR device("device-1", 4000, rate ,fCentr, gain);
     Data_mem data_mem(device.getChank_size(), device.getRate(), device.getCentFreq());
+
+    qDebug() << "Fmin" << fCentr - (rate/2);
+    qDebug() << "Fmax" << fCentr + (rate/2);
+
+//    auto v = data_mem.linspace(0,1,11);
+//    for (auto a : v) {
+//        qDebug() << a << '\n';
+//    }
     //data_mem.loadPtrWindow(&window);
     data_mem.start();
     window.loadData_mem(&data_mem);
