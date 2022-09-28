@@ -7,9 +7,8 @@
 
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui (new Ui::MainWindow)
-{    
+{
     ui->setupUi(this);
-    textEdit=ui->textEdit;
     frequency = ui->lineFrequency;
     rate = ui->lineRate;
     gain = ui->lineGain;
@@ -67,8 +66,9 @@ void MainWindow::initChart()
     chartViewAmpl = new QChartView(chartAmplitude);
     chartViewAmpl->setRenderHint(QPainter::Antialiasing);
     chartViewAmpl->setRubberBand(QChartView::RectangleRubberBand);
-    ui->verticalLayout->addWidget(chartViewAmpl);
-    ui->verticalLayout->setContentsMargins(0,0,0,0);
+    ui->chartViewAmpl->setChart(chartAmplitude);
+
+
     chartAmplitude->legend()->hide();
     chartAmplitude->addSeries(seriesAmplitude);
     chartAmplitude->createDefaultAxes();
@@ -92,9 +92,8 @@ void MainWindow::initChart()
     chartFourier->setTitleBrush(QBrush(Qt::white));
     chartFourier->setPlotAreaBackgroundPen(QPen(Qt::white));
     chartFourier->setPlotAreaBackgroundBrush(QBrush(Qt::white));
-    ui->verticalLayout->addWidget(chartViewSpectr);
-    ui->verticalLayout->setContentsMargins(0,0,0,0);
     //chartFourier->legend()->hide();
+    ui->chartViewSpectr->setChart(chartFourier);
     chartFourier->addSeries(seriesFourier);
     chartFourier->createDefaultAxes();
     chartFourier->axisX() ->setRange(4.59488e+08, 4.60512e+08);
