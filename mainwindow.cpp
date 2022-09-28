@@ -15,47 +15,13 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui (new Ui::MainWi
     initChart();
     cur_x = 0;
     cur_spectr_x = 0;
-    float fmin =4.59488e+08;
-    float fmax =4.60512e+08;
-    std::vector<float> space = this->linspace(fmin, fmax, 2048);
-    for (int j = 0; j<2048; j++)
-    {
-        *seriesFourier << QPointF(space[j], 0);
-    }
-
-    for (int j = 0; j<500; j++)
-    {
-        *seriesAmplitude << QPointF(j, 0);
-       // *seriesFourier << QPointF(j, 0);
-    }
-    timerAmplitude = new QTimer(this);
-    connect(timerAmplitude, &QTimer::timeout, [=]() {
-        //const Complex test[] = {1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0 };
-        CArray& data = dataPtr->getFFT();
-//        for (int j = 0; j < dataPtr->getDataSize(); j++)
-//        {
-//            qDebug() << "data" << data[j].real();
-//        }
-        float* arrReal = dataPtr->getDataReal();        
-        data = dataPtr->getFFT();
-        int count = 0;
-        while (count < 2048)
-        {
-            //series->replace(cur_x, cur_x, arrReal[cur_x]);
-            if (count < 500)
-            {
-                seriesAmplitude->replace(count, count, arrReal[count]);
-            }
-            seriesFourier->replace(count, space[count], data[count].real());
-            //qDebug() << "data " << res[count].real();
-            count++;
-        }
-    });
 }
 
 
 void MainWindow::initChart()
 {
+    fMin = getValueOfLine(frequency) - (getValueOfLine(rate)/2);
+    fMax = getValueOfLine(frequency) + (getValueOfLine(rate)/2);
     seriesAmplitude = new QLineSeries();
     seriesAmplitude->setUseOpenGL(true);
     seriesAmplitude->setPen(QPen(Qt::black, 2, Qt::DashLine));
@@ -93,8 +59,43 @@ void MainWindow::initChart()
     ui->chartViewSpectr->setChart(chartFourier);
     chartFourier->addSeries(seriesFourier);
     chartFourier->createDefaultAxes();
-    chartFourier->axisX() ->setRange(4.59488e+08, 4.60512e+08);
+    chartFourier->axisX() ->setRange(fMin, fMax);
     chartFourier->axisY() ->setRange(0, 200);
+
+    std::vector<float> space = this->linspace(fMin, fMax, 2048);
+    for (int j = 0; j<2048; j++)
+    {
+        *seriesFourier << QPointF(space[j], 0);
+    }
+
+    for (int j = 0; j<500; j++)
+    {
+        *seriesAmplitude << QPointF(j, 0);
+       // *seriesFourier << QPointF(j, 0);
+    }
+    timerAmplitude = new QTimer(this);
+    connect(timerAmplitude, &QTimer::timeout, [=]() {
+        //const Complex test[] = {1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0 };
+        CArray& data = dataPtr->getFFT();
+//        for (int j = 0; j < dataPtr->getDataSize(); j++)
+//        {
+//            qDebug() << "data" << data[j].real();
+//        }
+        float* arrReal = dataPtr->getDataReal();
+        data = dataPtr->getFFT();
+        int count = 0;
+        while (count < 2048)
+        {
+            //series->replace(cur_x, cur_x, arrReal[cur_x]);
+            if (count < 500)
+            {
+                seriesAmplitude->replace(count, count, arrReal[count]);
+            }
+            seriesFourier->replace(count, space[count], data[count].real());
+            //qDebug() << "data " << res[count].real();
+            count++;
+        }
+    });
 }
 
 
@@ -106,7 +107,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_startButton_clicked()
 {
-    dataPtr->setDataSession(ui->lineFrequency->text().toFloat(), ui->lineRate->text().toFloat(), ui->lineGain->text().toFloat());
+    dataPtr->setDataSession(getValueOfLine(frequency), getValueOfLine(rate), getValueOfLine(gain));
     emit startButton(dataPtr);
     startTimer();
 }
@@ -140,4 +141,10 @@ std::vector<float> MainWindow::linspace(float start, float end, int count)
         result.push_back(start + i * step);
     }
     return result;
+}
+
+
+float MainWindow::getValueOfLine(QLineEdit *line)
+{
+    return line->text().toFloat();
 }

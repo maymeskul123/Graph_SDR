@@ -5,7 +5,6 @@
 #include <typeinfo>
 #include "devicesdr.h"
 #include <complex>
-#include "mainwindow.h"
 
 
 DeviceSDR::DeviceSDR(QString threadName, int chankSize) :
@@ -14,6 +13,7 @@ DeviceSDR::DeviceSDR(QString threadName, int chankSize) :
     chank_size = chankSize;    
     isAborted = false;
 }
+
 
 void DeviceSDR::setup_SDR()
 {
@@ -40,11 +40,12 @@ void DeviceSDR::setup_SDR()
         sdr = SoapySDR::Device::make(args);        
         sdr->setFrequency(SOAPY_SDR_RX, 0, centrFreq);
         sdr->setSampleRate(SOAPY_SDR_RX, 0, rate);
-        //sdr->setAntenna(SOAPY_SDR_RX, 0, "LNAL");
+        sdr->setAntenna(SOAPY_SDR_RX, 0, "LNAL");
         sdr->setGain(SOAPY_SDR_RX, 0, gain);
         rx_stream = sdr->setupStream( SOAPY_SDR_RX, SOAPY_SDR_CF32);
         sdr->activateStream(rx_stream);
 }
+
 
 void DeviceSDR::run()
 {
@@ -89,6 +90,7 @@ void DeviceSDR::receive_signal()
     SoapySDR::Device::unmake(sdr);    
     quit();
 }
+
 
 DeviceSDR::~DeviceSDR()
 {

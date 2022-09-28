@@ -12,14 +12,12 @@ SOURCES += \
     data_mem.cpp \
     devicesdr.cpp \
     main.cpp \
-    mainwindow.cpp \
-    mytimer.cpp
+    mainwindow.cpp
 
 HEADERS += \
     data_mem.h \
     devicesdr.h \
-    mainwindow.h \
-    mytimer.h
+    mainwindow.h
 
 FORMS += \
     mainwindow.ui

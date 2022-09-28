@@ -58,5 +58,7 @@ private:
     QChartView *chartViewAmpl;
     QChartView *chartViewSpectr;
     QTimer *timerAmplitude;
+    float fMin, fMax;
+    float getValueOfLine(QLineEdit*);
 };
 #endif // MAINWINDOW_H

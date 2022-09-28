@@ -63,10 +63,12 @@ void Data_mem::receiveStopButton()
     isAborted = true;
 }
 
+
 float* Data_mem::getDataReal()
 {
     return (float *)realData;
 }
+
 
 void Data_mem::fft(CArray& x)
 {
@@ -91,6 +93,7 @@ void Data_mem::fft(CArray& x)
         x[k+N/2] = even[k] - static_cast<std::complex<float>>(t);
     }
 }
+
 
 CArray& Data_mem::getFFT()
 {
