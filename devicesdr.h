@@ -14,7 +14,7 @@ class DeviceSDR : public QThread
 {    
     Q_OBJECT
 public:
-    explicit DeviceSDR(QString threadName, int chankSize, float rate, float centFreq, float gane);
+    explicit DeviceSDR(QString threadName, int chankSize);
     bool isAborted;
     ;
     Data_mem *data;
@@ -29,12 +29,12 @@ public:
     void setup_SDR();
     int getChank_size();
     float getRate();
-    float getCentFreq();
+    float getCentrFreq();
     //void load_data(Data_mem data);
 private slots:
     void finished();
 public slots:
-    void receiveStart();
+    void receiveStart(Data_mem *ptrDataMem);
     void receiveStop();
 signals:
     void send_value(std::complex <float> *sendBuff[]);
@@ -43,7 +43,7 @@ private:
     QString name;
     int chank_size;
     float rate;
-    float cent_freq;
+    float centrFreq;
     float gain;
 };
 

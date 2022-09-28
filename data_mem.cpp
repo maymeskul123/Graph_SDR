@@ -8,10 +8,8 @@
 //typedef std::complex<float> Complex;
 typedef std::valarray<Complex> CArray;
 
-Data_mem::Data_mem(int size_data_, float rate_, float cent_freq_)
-{    
-    rate = rate_;
-    centFreq = cent_freq_;
+Data_mem::Data_mem(int size_data_)
+{
     isAborted = false;
     dataPtr = new std::complex<float> [size_data_];
     realData = new float[size_data_];
@@ -51,8 +49,16 @@ void Data_mem::chunkFull(bool flag)
 }
 
 
-void Data_mem::receiveStopButton(){
+void Data_mem::setDataSession(float centrFreq_, float rate_, float gain_)
+{
+    rate = rate_;
+    centrFreq = centrFreq_;
+    gain = gain_;
+}
 
+
+void Data_mem::receiveStopButton()
+{
     //qDebug() << "Receive Stop Button!";
     isAborted = true;
 }
@@ -98,26 +104,35 @@ CArray& Data_mem::getFFT()
 //            qDebug() << "before" << it->real();
 //        }
         fft(x);
-        x = abs(x);
+        //x = abs(x);
+        x = abs(20 * log10(x));
 //        for (int j = 0; j < size_data; j++)
 //        {
-//            qDebug() << "before" << y[j].real()<< "after" << d[j].real();
+//            qDebug() << "before" << x[j].real()<< "after" << d[j].real();
 //        }
         return dataSpectr;
 }
+
 
 int Data_mem::getDataSize()
 {
     return size_data;
 }
 
-std::vector<double> Data_mem::linspace(double start, double end, int count)
+
+float Data_mem::getCentrFreq()
 {
-    std::vector<double> r;
-    r.reserve(count);
-    double step = (end - start) / (count-1);
-    for (int i = 0; i < count ; i++) {
-        r.push_back(start + i * step);
-    }
-    return r;
+    return centrFreq;
+}
+
+
+float Data_mem::getRate()
+{
+    return rate;
+}
+
+
+float Data_mem::getGain()
+{
+    return gain;
 }

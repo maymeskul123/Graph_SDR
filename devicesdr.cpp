@@ -8,13 +8,10 @@
 #include "mainwindow.h"
 
 
-DeviceSDR::DeviceSDR(QString threadName, int chankSize, float rate_, float centFreq_, float gain_) :
+DeviceSDR::DeviceSDR(QString threadName, int chankSize) :
     name(threadName)
 {    
-    chank_size = chankSize;
-    rate = rate_;
-    cent_freq = centFreq_;
-    gain = gain_;
+    chank_size = chankSize;    
     isAborted = false;
 }
 
@@ -41,7 +38,7 @@ void DeviceSDR::setup_SDR()
 
         //	1.2 make device
         sdr = SoapySDR::Device::make(args);        
-        sdr->setFrequency(SOAPY_SDR_RX, 0, cent_freq);
+        sdr->setFrequency(SOAPY_SDR_RX, 0, centrFreq);
         sdr->setSampleRate(SOAPY_SDR_RX, 0, rate);
         //sdr->setAntenna(SOAPY_SDR_RX, 0, "LNAL");
         sdr->setGain(SOAPY_SDR_RX, 0, gain);
@@ -101,9 +98,12 @@ DeviceSDR::~DeviceSDR()
 }
 
 
-void DeviceSDR::receiveStart()
+void DeviceSDR::receiveStart(Data_mem *ptrDataMem)
 {
     //qDebug() << "START RECEIVE";
+    centrFreq = ptrDataMem->getCentrFreq();
+    gain = ptrDataMem->getGain();
+    rate = ptrDataMem->getRate();
     setup_SDR();
     start();
 }
@@ -134,7 +134,8 @@ float DeviceSDR::getRate()
 }
 
 
-float DeviceSDR::getCentFreq()
+float DeviceSDR::getCentrFreq()
 {
-    return cent_freq;
+    return centrFreq;
 }
+

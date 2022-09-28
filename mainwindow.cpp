@@ -36,9 +36,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui (new Ui::MainWi
 //        {
 //            qDebug() << "data" << data[j].real();
 //        }
-        float* arrReal = dataPtr->getDataReal();
-        //dataPtr->fft(data);
-        //data = dataPtr->getFFT();
+        float* arrReal = dataPtr->getDataReal();        
+        data = dataPtr->getFFT();
         int count = 0;
         while (count < 2048)
         {
@@ -67,14 +66,12 @@ void MainWindow::initChart()
     chartViewAmpl->setRenderHint(QPainter::Antialiasing);
     chartViewAmpl->setRubberBand(QChartView::RectangleRubberBand);
     ui->chartViewAmpl->setChart(chartAmplitude);
-
-
     chartAmplitude->legend()->hide();
     chartAmplitude->addSeries(seriesAmplitude);
     chartAmplitude->createDefaultAxes();
     //chartAmplitude->axisX() ->setRange(0., 500.0);
     chartAmplitude->axisX() ->setRange(0., 500.0);
-    chartAmplitude->axisY() ->setRange(-0.05, 0.05);
+    chartAmplitude->axisY() ->setRange(-0.02, 0.02);
 
     seriesFourier = new QLineSeries();
     seriesFourier->setUseOpenGL(true);
@@ -97,7 +94,7 @@ void MainWindow::initChart()
     chartFourier->addSeries(seriesFourier);
     chartFourier->createDefaultAxes();
     chartFourier->axisX() ->setRange(4.59488e+08, 4.60512e+08);
-    chartFourier->axisY() ->setRange(0, 0.5);
+    chartFourier->axisY() ->setRange(0, 200);
 }
 
 
@@ -108,8 +105,9 @@ MainWindow::~MainWindow()
 
 
 void MainWindow::on_startButton_clicked()
-{    
-    emit startButton();
+{
+    dataPtr->setDataSession(ui->lineFrequency->text().toFloat(), ui->lineRate->text().toFloat(), ui->lineGain->text().toFloat());
+    emit startButton(dataPtr);
     startTimer();
 }
 
@@ -135,11 +133,11 @@ void MainWindow::loadData_mem(Data_mem *data)
 
 std::vector<float> MainWindow::linspace(float start, float end, int count)
 {
-    std::vector<float> r;
-    r.reserve(count);
+    std::vector<float> result;
+    result.reserve(count);
     float step = (end - start) / (count-1);
     for (int i = 0; i < count ; i++) {
-        r.push_back(start + i * step);
+        result.push_back(start + i * step);
     }
-    return r;
+    return result;
 }

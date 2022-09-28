@@ -48,7 +48,7 @@ public slots:
     //void receiveVal(std::complex<float> *data[]);
 
 signals:
-    void startButton();
+    void startButton(Data_mem *ptrDataMem);
     void stopButton();
 
 private:

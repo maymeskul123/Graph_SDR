@@ -23,15 +23,12 @@ int main(int argc, char *argv[])
     //qDebug() << "resolution" << scr[0]->geometry() << scr[1]->geometry();
     //QScreen *scr1
     MainWindow window;    
-    window.show();
-    float fCentr = window.frequency->text().toFloat();
-    float rate = window.rate->text().toFloat();
-    float gain = window.gain->text().toFloat();
-    DeviceSDR device("device-1", 4000, rate ,fCentr, gain);
-    Data_mem data_mem(device.getChank_size(), device.getRate(), device.getCentFreq());
+    window.show();    
+    DeviceSDR device("device-1", 4000);
+    Data_mem data_mem(device.getChank_size());
 
-    qDebug() << "Fmin" << fCentr - (rate/2);
-    qDebug() << "Fmax" << fCentr + (rate/2);
+    //qDebug() << "Fmin" << fCentr - (rate/2);
+    //qDebug() << "Fmax" << fCentr + (rate/2);
 
 //    auto v = data_mem.linspace(0,1,11);
 //    for (auto a : v) {
@@ -40,7 +37,7 @@ int main(int argc, char *argv[])
     //data_mem.loadPtrWindow(&window);
     data_mem.start();
     window.loadData_mem(&data_mem);
-    app.connect(&window, SIGNAL(startButton()), &device, SLOT(receiveStart()));
+    app.connect(&window, SIGNAL(startButton(Data_mem*)), &device, SLOT(receiveStart(Data_mem*)));
     app.connect(&window, SIGNAL(stopButton()), &device, SLOT(receiveStop()));
     //app.connect(&device, &DeviceSDR::send_value, &window, &MainWindow::receiveVal);
     app.connect(&device, &DeviceSDR::send_value, &data_mem, &Data_mem::receiveValue);

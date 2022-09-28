@@ -14,7 +14,7 @@ class Data_mem : public QThread
 {
     Q_OBJECT
 public:   
-    explicit Data_mem(int size_data, float rate, float cent_freq);
+    explicit Data_mem(int size_data);
     ~Data_mem();
     //void set_data(std::complex<float> *ptrArray[]);
     void run();
@@ -22,10 +22,13 @@ public:
     float* getDataReal();
     //void fft(CArray& x);
     void fft(CArray& x);
+    void setDataSession(float centrFreq_, float rate_, float gain_);
     int getDataSize();
-    CArray& getFFT();
-    std::vector<double> linspace(double start, double end, int count);
+    CArray& getFFT();    
     bool chunkReceiveFull;
+    float getCentrFreq();
+    float getRate();
+    float getGain();
 
 
 public slots:
@@ -35,12 +38,13 @@ public slots:
 
 private:
     std::complex<float> *dataPtr;
-    float centFreq;
+    float centrFreq;
     float rate;
+    float gain;
     bool isAborted;
     float *realData;
     int size_data;
-    CArray dataSpectr;    
+    CArray dataSpectr;
 };
 
 #endif // DATA_MEM_H
