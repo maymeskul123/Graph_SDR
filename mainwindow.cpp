@@ -11,21 +11,35 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui (new Ui::MainWi
     ui->setupUi(this);
     frequency = ui->lineFrequency;
     rate = ui->lineRate;
-    gain = ui->lineGain;
-    initChart();
+    gain = ui->lineGain;    
     cur_x = 0;
     cur_spectr_x = 0;
+    isPressStart = false;
+    isPressStop = false;
 }
 
 
 void MainWindow::initChart()
 {
     fMin = getValueOfLine(frequency) - (getValueOfLine(rate)/2);
-    fMax = getValueOfLine(frequency) + (getValueOfLine(rate)/2);
+    fMax = getValueOfLine(frequency) + (getValueOfLine(rate)/2);    
     seriesAmplitude = new QLineSeries();
+    seriesFourier = new QLineSeries();
+    chartAmplitude = new QChart();
+    std::vector<float> space = this->linspace(fMin, fMax, 2048);
+    for (int j = 0; j<2048; j++)
+    {
+        *seriesFourier << QPointF(space[j], 0);
+    }
+
+    for (int j = 0; j<500; j++)
+    {
+        *seriesAmplitude << QPointF(j, 0);
+       // *seriesFourier << QPointF(j, 0);
+    }
+
     seriesAmplitude->setUseOpenGL(true);
     seriesAmplitude->setPen(QPen(Qt::black, 2, Qt::DashLine));
-    chartAmplitude = new QChart();
     chartAmplitude->setTitle("Amplitude");
     chartAmplitude->setAnimationOptions(QChart::AllAnimations);
     chartViewAmpl = new QChartView(chartAmplitude);
@@ -38,8 +52,6 @@ void MainWindow::initChart()
     //chartAmplitude->axisX() ->setRange(0., 500.0);
     chartAmplitude->axisX() ->setRange(0., 500.0);
     chartAmplitude->axisY() ->setRange(-0.02, 0.02);
-
-    seriesFourier = new QLineSeries();
     seriesFourier->setUseOpenGL(true);
     seriesFourier->setPen(QPen(Qt::yellow, 2, Qt::DashLine));
     seriesFourier->setUseOpenGL(true);
@@ -62,17 +74,7 @@ void MainWindow::initChart()
     chartFourier->axisX() ->setRange(fMin, fMax);
     chartFourier->axisY() ->setRange(0, 200);
 
-    std::vector<float> space = this->linspace(fMin, fMax, 2048);
-    for (int j = 0; j<2048; j++)
-    {
-        *seriesFourier << QPointF(space[j], 0);
-    }
 
-    for (int j = 0; j<500; j++)
-    {
-        *seriesAmplitude << QPointF(j, 0);
-       // *seriesFourier << QPointF(j, 0);
-    }
     timerAmplitude = new QTimer(this);
     connect(timerAmplitude, &QTimer::timeout, [=]() {
         //const Complex test[] = {1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0 };
@@ -106,8 +108,15 @@ MainWindow::~MainWindow()
 
 
 void MainWindow::on_startButton_clicked()
-{
+{    
+    isPressStart = true;
+    if (isPressStop)
+    {
+        seriesAmplitude->clear();
+        seriesFourier->clear();
+    }
     dataPtr->setDataSession(getValueOfLine(frequency), getValueOfLine(rate), getValueOfLine(gain));
+    initChart();
     emit startButton(dataPtr);
     startTimer();
 }
@@ -115,6 +124,8 @@ void MainWindow::on_startButton_clicked()
 
 void MainWindow::on_stopButton_clicked()
 {
+    isPressStop = true;
+    isPressStart = false;
     emit stopButton();
     timerAmplitude->stop();
 }

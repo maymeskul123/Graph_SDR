@@ -60,5 +60,6 @@ private:
     QTimer *timerAmplitude;
     float fMin, fMax;
     float getValueOfLine(QLineEdit*);
+    bool isPressStart, isPressStop;
 };
 #endif // MAINWINDOW_H
